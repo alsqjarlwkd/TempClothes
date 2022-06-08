@@ -51,5 +51,8 @@
 # 배포 주소
 - http://tempclothes.site
 
+# 시연 PPT
+- https://docs.google.com/presentation/d/1fECmvSoCuw6171MpoozOsq8vnzEk5KZD/edit?usp=sharing&ouid=110098685050610363551&rtpof=true&sd=true
+
 
 

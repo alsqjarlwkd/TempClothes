@@ -1,11 +1,22 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
+import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import SignupUI from "./signup.presenter";
 import { useRouter } from "next/router";
 import { CREATE_USER, CONFIRM_OVERLAP_EMAIL, CONFIRM_OVERLAP_NIC, CONFIRM_AUTH_NUMBER, CREATE_PHONE_AUTH, UPDATE_USER } from "./signup.quries";
 import { useRecoilState } from "recoil";
 import { authState, timerState } from "../common/store";
 import { toast } from "react-toastify";
+import {
+  IMutation,
+  IMutationCreateUserArgs,
+  IMutationConfirmOverlapEmailArgs,
+  IMutationConfirmOverlapNicArgs,
+  IMutationConfirmAuthNumberArgs,
+  IMutationCreatePhoneAuthArgs,
+  IMutationUpdateUserArgs,
+} from "../types/types";
+import { boolean } from "yup";
+import { IQuery } from "../types/types";
 
 const FETCH_USER = gql`
   query {
@@ -30,15 +41,15 @@ const FETCH_USER = gql`
 
 export default function Signup() {
   const router = useRouter();
-  const [m_createUser] = useMutation(CREATE_USER);
-  const [m_overLapEmail] = useMutation(CONFIRM_OVERLAP_EMAIL);
-  const [m_overLapNic] = useMutation(CONFIRM_OVERLAP_NIC);
-  const [m_authNumber] = useMutation(CONFIRM_AUTH_NUMBER);
-  const [m_phoneAuth] = useMutation(CREATE_PHONE_AUTH);
-  const [m_updateUser] = useMutation(UPDATE_USER);
-  const [authOk, setAuthFalse] = useRecoilState(authState);
-  const [, setSendAuthNumber] = useRecoilState(timerState);
-  const { data: socialLoginData } = useQuery(FETCH_USER);
+  const [m_createUser] = useMutation<Pick<IMutation, "createUser">, IMutationCreateUserArgs>(CREATE_USER);
+  const [m_overLapEmail] = useMutation<Pick<IMutation, "confirmOverlapEmail">, IMutationConfirmOverlapEmailArgs>(CONFIRM_OVERLAP_EMAIL);
+  const [m_overLapNic] = useMutation<Pick<IMutation, "confirmOverlapNic">, IMutationConfirmOverlapNicArgs>(CONFIRM_OVERLAP_NIC);
+  const [m_authNumber] = useMutation<Pick<IMutation, "confirmAuthNumber">, IMutationConfirmAuthNumberArgs>(CONFIRM_AUTH_NUMBER);
+  const [m_phoneAuth] = useMutation<Pick<IMutation, "createPhoneAuth">, IMutationCreatePhoneAuthArgs>(CREATE_PHONE_AUTH);
+  const [m_updateUser] = useMutation<Pick<IMutation, "updateUser">, IMutationUpdateUserArgs>(UPDATE_USER);
+  const [authOk, setAuthFalse] = useRecoilState<boolean>(authState);
+  const [, setSendAuthNumber] = useRecoilState<boolean>(timerState);
+  const { data: socialLoginData } = useQuery<Pick<IQuery, "fetchUser">>(FETCH_USER);
 
   const [inputs, setInputs] = useState({
     nickname: " ",
@@ -55,7 +66,7 @@ export default function Signup() {
   const [clickStyle, setClickStyle] = useState("");
   const [clickRegion, setClickRegion] = useState("");
 
-  const handleSignUpInputs = (e: any) => {
+  const handleSignUpInputs = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInputs({
       ...inputs,
@@ -198,45 +209,42 @@ export default function Signup() {
     }
   };
 
-  const onClickEventTag = (e: any) => {
-    if (e.target.id === "style") {
+  const onClickEventTag = (e: MouseEvent<HTMLDivElement> | MouseEvent<HTMLSpanElement>) => {
+    const target = e.currentTarget;
+    if (target.id === "style") {
       setInputs({
         ...inputs,
-        [e.target.id]: e.target.innerText,
+        [target.id]: target.innerText,
       });
     }
 
-    if (e.target.id === "gender") {
+    if (target.id === "gender") {
       setInputs({
         ...inputs,
-        [e.target.id]: e.target.innerText,
+        [target.id]: target.innerText,
       });
     }
 
-    if (e.target.id === "region") {
+    if (target.id === "region") {
       setInputs({
         ...inputs,
-        [e.target.id]: e.target.innerText,
+        [target.id]: target.innerText,
       });
     }
   };
 
-  const onClickTagGender = (id) => {
+  const onClickTagGender = (id: string) => {
     setClickGender(id);
   };
 
-  const onClickTagStyle = (id) => {
+  const onClickTagStyle = (id: string) => {
     setClickStyle(id);
   };
 
-  const onClickRegion = (id) => {
+  const onClickRegion = (id: string) => {
     setClickRegion(id);
   };
-  const noAuthSignUp = () => {
-    toast.error("인증이 완료되지 않았습니다!", {
-      icon: "🤔",
-    });
-  };
+
   return (
     <SignupUI
       handleSignUpInputs={handleSignUpInputs}
@@ -247,7 +255,6 @@ export default function Signup() {
       inputs={inputs}
       createPhoneAuth={createPhoneAuth}
       confirmAuthNumber={confirmAuthNumber}
-      noAuthSignUp={noAuthSignUp}
       socialLoginData={socialLoginData}
       updateUserFunc={updateUserFunc}
       onClickTagGender={onClickTagGender}

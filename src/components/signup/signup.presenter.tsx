@@ -4,8 +4,9 @@ import * as s from "./signup.styles";
 import { useRecoilState } from "recoil";
 import { authState, timerState } from "../common/store";
 import { useEffect, useState } from "react";
+import { IPropsSignUpUI } from "./signup.types";
 
-export default function SignupUI(props: any) {
+export default function SignupUI(props: IPropsSignUpUI) {
   const {
     handleSignUpInputs,
     signUpFunc,
@@ -117,8 +118,8 @@ export default function SignupUI(props: any) {
                 return (
                   <s.TagItemDiv
                     id="gender"
-                    onClick={() => {
-                      onClickEventTag(), onClickTagGender(el);
+                    onClick={(event) => {
+                      onClickEventTag(event), onClickTagGender(el);
                     }}
                     key={index}
                     style={{ background: "#FFF2B2", border: "1px solid #FFDD87" }}

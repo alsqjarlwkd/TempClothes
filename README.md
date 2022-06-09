@@ -33,7 +33,7 @@
 - apollo-client
 - Recoil
 - emotion
-- docker
+- GCP(VM)
 - Next.js
 
 # 구현한 사항(본인)

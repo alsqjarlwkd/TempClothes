@@ -1,0 +1,17 @@
+version: "3.7"
+services:
+  my-frontend:
+    build:
+      context: . #들어가는 파일들 전체
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/tempclothes/src #src안에 myfolder 가 변경점이 있을때 바로 업데이트
+    ports:
+      - 3000:3000 # 도커 환경에서 3000이 켜졌으면 로컬에서는 확인할수 없기에 포트포워딩
+
+#[docker-compose 가 있다면]
+#1.docker compose build
+#2.docker compose up
+
+#[docker compose 파일이 여러개가 있을때 만약에 개발 compose 라면?]
+# docker compose -f docker-compose.dev.yaml build
